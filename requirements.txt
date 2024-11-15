@@ -1,0 +1,13 @@
+speechrecognition        # Videolardaki konuşmaları metne çevirme
+pydub                    # Ses işleme için
+DeepFace                 # Yüz analizi için
+nltk                     # Metin analizi (doğal dil işleme) için
+Flask                    # Web arayüzunu oluşturma
+requests                 # HTTP istekleri yapma
+moviepy                  # Videoşekliği kullanarak metin ve sesi birbirine eğitme
+python-dotenv            # .env dosyasını kullanmak için
+tf-keras                 # Tensorflow ve Keras kullanmak için
+retinaface               # Yüz analizi için
+deepface                 # Yüz analizi için
+dotenv                   # .env dosyasını kullanma
+opencv-python-headless   # OpenCV kullanma
