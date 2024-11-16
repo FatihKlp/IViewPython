@@ -2,7 +2,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path="../.env")
+load_dotenv()
 
 VIDEO_API_LINK = os.getenv("VIDEO_API_LINK")
 VIDEO_API_PROJECT = os.getenv("VIDEO_API_PROJECT")

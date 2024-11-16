@@ -7,3 +7,5 @@ myenv/
 # Ignore temporary files
 *.pyc
 __pycache__/
+transcriptions
+temp_videos
