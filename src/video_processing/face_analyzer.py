@@ -1,9 +1,14 @@
 import cv2
 import os
 import numpy as np
+import json
 from deepface import DeepFace
+from collections import Counter
 
 def extract_frames(video_path, output_folder="frames", interval_seconds=10):
+    """
+    Video'dan frame çıkartır.
+    """
     os.makedirs(output_folder, exist_ok=True)
     vidcap = cv2.VideoCapture(video_path)
     fps = int(vidcap.get(cv2.CAP_PROP_FPS))
@@ -24,44 +29,61 @@ def extract_frames(video_path, output_folder="frames", interval_seconds=10):
     vidcap.release()
     return frame_paths
 
-def analyze_faces(video_path):
-    frames = extract_frames(video_path, interval_seconds=10)
-    face_analysis_results = []
+def analyze_faces(video_path, video_id, interval_seconds=10):
+    """
+    Frame'leri analiz eder, tek bir kişi için ortalama sonuç döner ve JSON formatında kaydeder.
+    """
+    try:
+        # Klasör oluştur
+        analysis_folder = f"face_analysis/{video_id}"
+        os.makedirs(analysis_folder, exist_ok=True)
 
-    for frame in frames:
-        try:
-            # DeepFace.analyze returns a list of dictionaries if analyzing multiple frames
-            analysis = DeepFace.analyze(img_path=frame, actions=['age', 'gender', 'race', 'emotion'])
+        # Frame'leri çıkart
+        frames_folder = os.path.join(analysis_folder, "frames")
+        frames = extract_frames(video_path, output_folder=frames_folder, interval_seconds=interval_seconds)
 
-            # If the result is a list, process each entry in the list
-            if isinstance(analysis, list):
-                for item in analysis:
-                    # `DeepFace.analyze` returns a dictionary per item, so we can sanitize the data
-                    sanitized_analysis = {
-                        key: (float(value) if isinstance(value, (np.float32, np.float64)) else
-                              int(value) if isinstance(value, (np.int32, np.int64)) else value)
-                        for key, value in item.items()
-                    }
-                    face_analysis_results.append({
-                        "frame": frame,
-                        "analysis": sanitized_analysis
-                    })
-            else:
-                # Fallback in case analysis returns a single dictionary (unexpected)
-                sanitized_analysis = {
-                    key: (float(value) if isinstance(value, (np.float32, np.float64)) else
-                          int(value) if isinstance(value, (np.int32, np.int64)) else value)
-                    for key, value in analysis.items()
-                }
-                face_analysis_results.append({
-                    "frame": frame,
-                    "analysis": sanitized_analysis
-                })
-        except Exception as e:
-            print(f"Error analyzing frame {frame}: {e}")
+        # Frame analiz sonuçları
+        aggregated_results = {
+            "age": [],
+            "gender": [],
+            "race": [],
+            "emotion": []
+        }
 
-    # Clean up temporary frame files
-    for frame in frames:
-        os.remove(frame)
+        for frame in frames:
+            try:
+                # DeepFace analiz
+                analysis = DeepFace.analyze(img_path=frame, actions=['age', 'gender', 'race', 'emotion'])
+                
+                # Eğer analiz bir liste dönerse sadece ilk sonucu al
+                if isinstance(analysis, list):
+                    analysis = analysis[0]
 
-    return face_analysis_results
+                # Analiz sonuçlarını toplulaştır
+                aggregated_results["age"].append(analysis["age"])
+                aggregated_results["gender"].append(analysis["dominant_gender"])
+                aggregated_results["race"].append(analysis["dominant_race"])
+                aggregated_results["emotion"].append(analysis["dominant_emotion"])
+
+            except Exception as e:
+                print(f"Error analyzing frame {frame}: {e}")
+
+        # Sonuçları birleştir
+        final_result = {
+            "average_age": np.mean(aggregated_results["age"]) if aggregated_results["age"] else None,
+            "dominant_gender": Counter(aggregated_results["gender"]).most_common(1)[0][0] if aggregated_results["gender"] else None,
+            "dominant_race": Counter(aggregated_results["race"]).most_common(1)[0][0] if aggregated_results["race"] else None,
+            "dominant_emotion": Counter(aggregated_results["emotion"]).most_common(1)[0][0] if aggregated_results["emotion"] else None
+        }
+
+        # Analiz sonuçlarını JSON olarak kaydet
+        result_path = os.path.join(analysis_folder, f"{video_id}_face_analysis.json")
+        with open(result_path, "w", encoding="utf-8") as file:
+            json.dump(final_result, file, ensure_ascii=False, indent=4)
+
+        print(f"Face analysis saved at {result_path}")
+        return result_path
+
+    except Exception as e:
+        print(f"Error during face analysis: {e}")
+        return None
