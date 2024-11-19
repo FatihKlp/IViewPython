@@ -1,88 +1,88 @@
-absl-py==2.1.0
-astunparse==1.6.3
-beautifulsoup4==4.12.3
-blinker==1.9.0
-certifi==2024.8.30
-charset-normalizer==3.4.0
-click==8.1.7
-colorama==0.4.6
-decorator==4.4.2
-deepface==0.0.93
-ffmpeg-python==0.2.0
-filelock==3.16.1
-fire==0.7.0
-Flask==3.1.0
-Flask-Cors==5.0.0
-flatbuffers==24.3.25
-fsspec==2024.10.0
-future==1.0.0
-gast==0.6.0
-gdown==5.2.0
-google-pasta==0.2.0
-grpcio==1.67.1
-gunicorn==23.0.0
-h5py==3.12.1
-idna==3.10
-imageio==2.36.0
-imageio-ffmpeg==0.5.1
-itsdangerous==2.2.0
-Jinja2==3.1.4
-joblib==1.4.2
-keras==3.6.0
-libclang==18.1.1
-llvmlite==0.43.0
-lz4==4.3.3
-Markdown==3.7
-markdown-it-py==3.0.0
-MarkupSafe==3.0.2
-mdurl==0.1.2
-ml-dtypes==0.4.1
-more-itertools==10.5.0
-moviepy==1.0.3
-mpmath==1.3.0
-mtcnn==1.0.0
-namex==0.0.8
-networkx==3.4.2
-nltk==3.9.1
-numba==0.60.0
-numpy==2.0.2
-opencv-python==4.10.0.84
-opencv-python-headless==4.10.0.84
-opt_einsum==3.4.0
-optree==0.13.1
-packaging==24.2
-pandas==2.2.3
-pillow==11.0.0
-proglog==0.1.10
-protobuf==5.28.3
-pydub==0.25.1
-Pygments==2.18.0
-PySocks==1.7.1
-python-dateutil==2.9.0.post0
-python-dotenv==1.0.1
-pytz==2024.2
-regex==2024.11.6
-requests==2.32.3
-retina-face==0.0.17
-rich==13.9.4
-setuptools==75.5.0
-six==1.16.0
-soupsieve==2.6
-SpeechRecognition==3.11.0
-sympy==1.13.1
-tensorboard==2.18.0
-tensorboard-data-server==0.7.2
-tensorflow==2.18.0
-tensorflow_intel==2.18.0
-termcolor==2.5.0
-tf_keras==2.18.0
-tiktoken==0.8.0
-torch==2.5.1
-torchaudio==2.5.1
-tqdm==4.67.0
-typing_extensions==4.12.2
-tzdata==2024.2
-urllib3==2.2.3
-Werkzeug==3.1.3
-wheel==0.45.0
-wrapt==1.16.0
+absl-py==1.0.0           # Daha eski sürüm, Python 3.7 destekli
+astunparse==1.6.3        # Uyumlu
+beautifulsoup4==4.9.3    # Python 3.7 ile uyumlu
+blinker==1.6.2           # Uyumlu
+certifi==2021.10.8       # Eski sürüm
+charset-normalizer==2.0.4 # Daha uyumlu sürüm
+click==8.0.4             # Uyumlu
+colorama==0.4.4          # Uyumlu
+decorator==4.4.2         # Uyumlu
+deepface==0.0.78         # Daha eski sürüm
+ffmpeg-python==0.2.0     # Uyumlu
+filelock==3.4.0          # Daha eski sürüm
+fire==0.4.0              # Eski sürüm
+Flask==2.0.3             # Flask 3.x Python 3.8 gerektiriyor
+Flask-Cors==3.0.10       # Eski sürüm
+flatbuffers==1.12        # Python 3.7 destekli son sürüm
+fsspec==2021.7.0         # Daha eski sürüm
+future==0.18.2           # Uyumlu
+gast==0.3.3              # TensorFlow ile uyumlu sürüm
+gdown==4.5.1             # Daha uyumlu sürüm
+google-pasta==0.2.0      # Uyumlu
+grpcio==1.39.0           # Python 3.7 destekli
+gunicorn==20.1.0         # Daha eski sürüm
+h5py==3.6.0              # Uyumlu
+idna==2.10               # Eski sürüm
+imageio==2.9.0           # Python 3.7 ile uyumlu
+imageio-ffmpeg==0.4.7    # Daha eski sürüm
+itsdangerous==2.0.1      # Flask ile uyumlu sürüm
+Jinja2==3.0.3            # Uyumlu
+joblib==1.1.0            # Daha eski sürüm
+keras==2.6.0             # TensorFlow ile uyumlu
+libclang==12.0.0         # Daha eski sürüm
+llvmlite==0.35.0         # Numba uyumlu sürüm
+lz4==3.1.3               # Daha eski sürüm
+Markdown==3.3.4          # Uyumlu
+markdown-it-py==2.0.0    # Daha eski sürüm
+MarkupSafe==2.0.1        # Flask ile uyumlu
+mdurl==0.1.2             # Uyumlu
+ml-dtypes==0.1.0         # Daha eski sürüm
+more-itertools==8.12.0   # Python 3.7 ile uyumlu
+moviepy==1.0.3           # Uyumlu
+mpmath==1.2.1            # Uyumlu
+mtcnn==0.1.0             # Eski sürüm
+namex==0.0.8             # Uyumlu
+networkx==2.6.3          # Daha eski sürüm
+nltk==3.7                # Daha eski sürüm
+numba==0.53.0            # Python 3.7 destekli
+numpy==1.21.6            # TensorFlow ile uyumlu
+opencv-python==4.5.5.64  # Daha eski sürüm
+opencv-python-headless==4.5.5.64 # Daha eski sürüm
+opt_einsum==3.3.0        # TensorFlow uyumlu
+optree==0.12.0           # Daha eski sürüm
+packaging==21.3          # Daha eski sürüm
+pandas==1.3.5            # Python 3.7 ile uyumlu
+pillow==8.4.0            # Daha eski sürüm
+proglog==0.1.10          # Uyumlu
+protobuf==3.19.6         # TensorFlow ile uyumlu
+pydub==0.25.1            # Uyumlu
+Pygments==2.10.0         # Daha eski sürüm
+PySocks==1.7.1           # Uyumlu
+python-dateutil==2.8.2   # Daha eski sürüm
+python-dotenv==0.20.0    # Daha eski sürüm
+pytz==2022.7.1           # Daha eski sürüm
+regex==2021.11.10        # Daha eski sürüm
+requests==2.26.0         # Python 3.7 uyumlu
+retina-face==0.0.13      # Daha eski sürüm
+rich==12.0.0             # Python 3.7 destekli
+setuptools==57.5.0       # Python 3.7 uyumlu
+six==1.16.0              # Uyumlu
+soupsieve==2.3.2.post1   # Daha eski sürüm
+SpeechRecognition==3.8.1 # Daha eski sürüm
+sympy==1.8               # Daha eski sürüm
+tensorboard==2.10.1      # Python 3.7 uyumlu
+tensorboard-data-server==0.6.1 # Daha eski sürüm
+tensorflow==2.10.0       # Python 3.7 destekli son sürüm
+tensorflow_intel==2.10.0 # TensorFlow ile uyumlu
+termcolor==1.1.0         # Daha eski sürüm
+tf_keras==2.6.0          # TensorFlow ile uyumlu
+tiktoken==0.3.3          # Daha eski sürüm
+torch==1.10.1            # Daha eski sürüm
+torchaudio==0.10.1       # Daha eski sürüm
+tqdm==4.62.3             # Daha eski sürüm
+typing_extensions==4.1.1 # Daha eski sürüm
+tzdata==2021.5           # Daha eski sürüm
+urllib3==1.26.7          # Python 3.7 uyumlu
+Werkzeug==2.0.3          # Flask ile uyumlu
+wheel==0.37.1            # Daha eski sürüm
+wrapt==1.12.1            # TensorFlow ile uyumlu
