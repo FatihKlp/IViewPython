@@ -10,3 +10,5 @@ __pycache__/
 transcriptions
 temp_videos
 face_analysis
+src/api/mainwhisper.py
+src/video_processing/transcriberwhisper.py
