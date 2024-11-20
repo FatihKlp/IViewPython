@@ -40,6 +40,9 @@ def transcribe_video(video_path, video_id):
         with sr.AudioFile(processed_audio_path) as source:
             total_duration = int(source.DURATION)
             print(f"Audio duration: {total_duration} seconds")
+            if total_duration == 0:
+                print("No audio detected in the video.")
+                return None
 
             # 30 saniyelik segmentlerle işle
             for offset in range(0, total_duration, 30):
@@ -78,3 +81,6 @@ def transcribe_video(video_path, video_id):
     except Exception as e:
         print(f"Error in transcription: {e}")
         return None
+    finally:
+        import gc
+        gc.collect()  # Gereksiz belleği temizler

@@ -61,6 +61,9 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
 
                 # Analiz sonuçlarını toplulaştır
                 aggregated_results["age"].append(analysis["age"])
+                if not aggregated_results["age"]:
+                    print("No faces detected in the video.")
+                    return None
                 aggregated_results["gender"].append(analysis["dominant_gender"])
                 aggregated_results["race"].append(analysis["dominant_race"])
                 aggregated_results["emotion"].append(analysis["dominant_emotion"])
@@ -92,3 +95,6 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
     except Exception as e:
         print(f"Error in face analysis: {e}")
         return None
+    finally:
+        import gc
+        gc.collect()  # Gereksiz belleği temizler

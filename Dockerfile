@@ -24,4 +24,4 @@ COPY . .
 EXPOSE 10000
 
 # Çalıştırma komutu (Flask uygulaması için)
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "src.api.main:app"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:${PORT}", "src.api.main:app"]
