@@ -10,7 +10,7 @@ import requests
 from utils.s3_handler import download_video_by_id
 from video_processing.transcriber import transcribe_video
 from video_processing.face_analyzer import analyze_faces
-from config import BACKEND_URL, FRONTEND_URL
+from config import BACKEND_URL, FRONTEND_URL, PORT
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": [FRONTEND_URL]}}, supports_credentials=True)
@@ -104,4 +104,4 @@ def process_video():
             print(f"Temporary face analysis file deleted: {face_analysis_path}")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=PORT, debug=True)
