@@ -1,6 +1,3 @@
-from deepface.commons.functions import initialize_folder_structure
-initialize_folder_structure("/app/.deepface")
-
 import sys
 import os
 import json
@@ -17,6 +14,14 @@ from config import BACKEND_URL, FRONTEND_URL, PORT
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": [FRONTEND_URL]}}, supports_credentials=True)
+
+def initialize_folder_structure(base_path):
+    required_dirs = ["weights"]
+    for folder in required_dirs:
+        full_path = os.path.join(base_path, folder)
+        os.makedirs(full_path, exist_ok=True)
+
+initialize_folder_structure("/app/.deepface")
 
 @app.route('/process_video', methods=['POST'])
 def process_video():
