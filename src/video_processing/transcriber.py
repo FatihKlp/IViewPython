@@ -1,49 +1,74 @@
-from io import BytesIO
 from pydub import AudioSegment
 from pydub.effects import normalize
 import subprocess
 import speech_recognition as sr
+import os
+import json
 
-def transcribe_video(video_stream):
+# FFmpeg'in bulunduğu yolu ekleyin
+os.environ["PATH"] += os.pathsep + r"C:\ffmpeg\bin"
+
+def transcribe_video(video_path, video_id):
     """
-    Videodan ses çıkarır, gürültüyü azaltır ve Türkçe metni döner.
+    Videodan ses çıkarır, gürültüyü azaltır ve Türkçe metin döker.
     """
     try:
+        # Kayıt dizinini oluştur
+        os.makedirs("transcriptions", exist_ok=True)
+
+        # Ses dosyasını çıkar
+        raw_audio_path = f"transcriptions/{video_id}_raw_audio.wav"
+        processed_audio_path = f"transcriptions/{video_id}_processed_audio.wav"
+
         # FFmpeg ile ses çıkarma
         command = [
-            "ffmpeg", "-i", "pipe:0",
-            "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", "pipe:1"
+            "ffmpeg", "-i", video_path,
+            "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", raw_audio_path
         ]
-        process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        audio_data, _ = process.communicate(input=video_stream.read())
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
 
-        # Pydub ile normalize edilmiş ses
-        audio = AudioSegment.from_file(BytesIO(audio_data), format="wav")
-        normalized_audio = normalize(audio)
+        # Pydub ile normalize edilmiş ve gürültü azaltılmış ses
+        audio = AudioSegment.from_file(raw_audio_path, format="wav")
+        audio = normalize(audio)  # Ses seviyesini normalize et
+        audio.export(processed_audio_path, format="wav")
 
         # SpeechRecognition ile ses dosyasını işleme
         recognizer = sr.Recognizer()
         transcription_segments = []
         full_transcription = ""
 
-        with sr.AudioFile(BytesIO(normalized_audio.raw_data)) as source:
+        with sr.AudioFile(processed_audio_path) as source:
             total_duration = int(source.DURATION)
+            print(f"Audio duration: {total_duration} seconds")
+
+            # 30 saniyelik segmentlerle işle
             for offset in range(0, total_duration, 30):
+                print(f"Processing segment starting at {offset}s...")
                 try:
                     audio_data = recognizer.record(source, duration=30)
                     text = recognizer.recognize_google(audio_data, language="tr-TR")
                     transcription_segments.append({"start": offset, "text": text})
-                    full_transcription += f"{text} "
+                    full_transcription += f"{text} "  # Segmenti birleştir
                 except sr.UnknownValueError:
+                    print(f"Could not understand audio at segment starting at {offset}s.")
                     transcription_segments.append({"start": offset, "text": None})
                 except sr.RequestError as e:
                     print(f"API request failed: {e}")
+                    transcription_segments.append({"start": offset, "text": None})
 
-        # Sonuçları döndür
-        return {
-            "segments": transcription_segments,
-            "full_transcription": full_transcription.strip()
-        }
+        # Birleştirilmiş ve segmentli metni JSON olarak kaydet
+        transcription_path = f"transcriptions/{video_id}_transcription.json"
+        with open(transcription_path, "w", encoding="utf-8") as file:
+            json.dump({
+                "segments": transcription_segments,
+                "full_transcription": full_transcription.strip()
+            }, file, ensure_ascii=False, indent=4)
+
+        print(f"Transcription saved to {transcription_path}")
+        os.remove(raw_audio_path)  # Ara dosyaları temizle
+        os.remove(processed_audio_path)
+        return transcription_path
+
     except subprocess.CalledProcessError as e:
         print(f"FFmpeg error: {e.stderr}")
         return None
