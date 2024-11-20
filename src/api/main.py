@@ -12,16 +12,19 @@ from video_processing.transcriber import transcribe_video
 from video_processing.face_analyzer import analyze_faces
 from config import BACKEND_URL, FRONTEND_URL, PORT
 
+# CPU modunda çalıştır
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": [FRONTEND_URL]}}, supports_credentials=True)
 
-def initialize_folder_structure(base_path):
+def initialize_folder_structure(base_path="/tmp/.deepface"):
     required_dirs = ["weights"]
     for folder in required_dirs:
         full_path = os.path.join(base_path, folder)
         os.makedirs(full_path, exist_ok=True)
 
-initialize_folder_structure("/app/.deepface")
+initialize_folder_structure()
 
 @app.route('/process_video', methods=['POST'])
 def process_video():
