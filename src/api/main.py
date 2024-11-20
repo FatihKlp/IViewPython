@@ -1,7 +1,5 @@
-from deepface.commons import functions
-
-# DeepFace klasör yapısını başlat
-functions.initialize_folder_structure("/app/.deepface")
+from deepface.commons.functions import initialize_folder_structure
+initialize_folder_structure("/app/.deepface")
 
 import sys
 import os
