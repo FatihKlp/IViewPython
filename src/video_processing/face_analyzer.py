@@ -76,14 +76,19 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
             "dominant_emotion": Counter(aggregated_results["emotion"]).most_common(1)[0][0] if aggregated_results["emotion"] else None
         }
 
-        # Analiz sonuçlarını JSON olarak kaydet
-        result_path = os.path.join(analysis_folder, f"{video_id}_face_analysis.json")
-        with open(result_path, "w", encoding="utf-8") as file:
+        # Kaydedilen dosya
+        face_analysis_path = os.path.join(analysis_folder, "face_analysis.json")
+        with open(face_analysis_path, "w", encoding="utf-8") as file:
             json.dump(final_result, file, ensure_ascii=False, indent=4)
 
-        print(f"Face analysis saved at {result_path}")
-        return result_path
+        print(f"Face analysis saved to {face_analysis_path}")
+        
+        # Cleanup frame images
+        for frame in frames:
+            os.remove(frame)
+
+        return face_analysis_path
 
     except Exception as e:
-        print(f"Error during face analysis: {e}")
+        print(f"Error in face analysis: {e}")
         return None

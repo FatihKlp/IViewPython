@@ -10,10 +10,10 @@ import requests
 from utils.s3_handler import download_video_by_id
 from video_processing.transcriber import transcribe_video
 from video_processing.face_analyzer import analyze_faces
-from config import BACKEND_URL
+from config import BACKEND_URL, FRONTEND_URL
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:5173"]}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": [FRONTEND_URL]}}, supports_credentials=True)
 
 @app.route('/process_video', methods=['POST'])
 def process_video():
@@ -60,7 +60,7 @@ def process_video():
         with open(face_analysis_path, "r", encoding="utf-8") as file:
             face_analysis_data = json.load(file)
 
-        # 3. Backend'e Gönderim
+        # 3. Backend’e Gönderim
         payload = {
             "transcription": full_transcription,
             "face_analysis": {
@@ -89,9 +89,19 @@ def process_video():
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
+        # Clean up all temporary files
         if os.path.exists(video_path):
             os.remove(video_path)
-            print(f"Temporary file deleted: {video_path}")
+            print(f"Temporary video file deleted: {video_path}")
+        
+        # Remove transcription and face analysis files if they exist
+        if transcription_path and os.path.exists(transcription_path):
+            os.remove(transcription_path)
+            print(f"Temporary transcription file deleted: {transcription_path}")
+        
+        if face_analysis_path and os.path.exists(face_analysis_path):
+            os.remove(face_analysis_path)
+            print(f"Temporary face analysis file deleted: {face_analysis_path}")
 
 if __name__ == '__main__':
     app.run(debug=True)

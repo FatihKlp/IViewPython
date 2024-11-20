@@ -65,8 +65,11 @@ def transcribe_video(video_path, video_id):
             }, file, ensure_ascii=False, indent=4)
 
         print(f"Transcription saved to {transcription_path}")
-        os.remove(raw_audio_path)  # Ara dosyaları temizle
+        
+        # Cleanup temporary audio files
+        os.remove(raw_audio_path)
         os.remove(processed_audio_path)
+        
         return transcription_path
 
     except subprocess.CalledProcessError as e:

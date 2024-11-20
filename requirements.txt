@@ -1,13 +1,11 @@
-speechrecognition        # Videolardaki konuşmaları metne çevirme
-pydub                    # Ses işleme için
-DeepFace                 # Yüz analizi için
-nltk                     # Metin analizi (doğal dil işleme) için
-Flask                    # Web arayüzunu oluşturma
-requests                 # HTTP istekleri yapma
-moviepy                  # Videoşekliği kullanarak metin ve sesi birbirine eğitme
-python-dotenv            # .env dosyasını kullanmak için
-tf-keras                 # Tensorflow ve Keras kullanmak için
-retinaface               # Yüz analizi için
-deepface                 # Yüz analizi için
-dotenv                   # .env dosyasını kullanma
-opencv-python-headless   # OpenCV kullanma
+Flask==2.2.3
+Flask-Cors==3.0.1
+requests==2.28.2
+deepface==0.0.1
+pydub==0.25.1
+SpeechRecognition==3.8.1
+opencv-python-headless==4.7.0.72
+numpy==1.26.0
+python-dotenv==1.0.0
+tf-keras==2.18.0
+tensorflow==2.18.0

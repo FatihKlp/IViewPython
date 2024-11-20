@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: my-flask-app
+    env: docker
+    branch: main
+    buildCommand: ""  # Dockerfile kendi başına yeterli
+    startCommand: ""  # Dockerfile içindeki CMD kullanılacak
