@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
-from utils.s3_handler import download_video_by_id
+from utils.s3_handler import download_video_by_signed_url
 from video_processing.transcriber import transcribe_video
 from video_processing.face_analyzer import analyze_faces
 from config import BACKEND_URL, FRONTEND_URL, PORT
@@ -28,21 +28,22 @@ initialize_folder_structure()
 
 @app.route('/process_video', methods=['POST'])
 def process_video():
-    video_id = request.json.get('video_id')
+    signed_url = request.json.get('signed_url')  # Frontend'den Signed URL bekliyoruz
     candidate_id = request.json.get('candidate_id')
 
-    if not video_id or not candidate_id:
-        print("Error: Missing video_id or candidate_id")
-        return jsonify({"error": "video_id and candidate_id are required"}), 400
+    if not signed_url or not candidate_id:
+        print("Error: Missing signed_url or candidate_id")
+        return jsonify({"error": "signed_url and candidate_id are required"}), 400
 
-    print(f"Received video_id: {video_id}")
+    print(f"Received signed_url: {signed_url}")
     print(f"Received candidate_id: {candidate_id}")
 
     try:
         # Video indirme
-        video_path = download_video_by_id(video_id)
+        video_id = signed_url.split('/')[-1].split('?')[0]  # Dosya adını URL'den çıkar
+        video_path = download_video_by_signed_url(signed_url, video_id)
         if not video_path:
-            print(f"Failed to download video with ID: {video_id}")
+            print(f"Failed to download video from Signed URL: {signed_url}")
             return jsonify({"error": "Video not found"}), 404
 
         print(f"Video downloaded successfully: {video_path}")
