@@ -58,6 +58,9 @@ def transcribe_video(video_path, video_id):
                 except sr.RequestError as e:
                     print(f"API request failed: {e}")
                     transcription_segments.append({"start": offset, "text": None})
+                except Exception as e:
+                    print(f"Unexpected error in segment starting at {offset}s: {e}")
+                    transcription_segments.append({"start": offset, "text": None})
 
         # Birleştirilmiş ve segmentli metni JSON olarak kaydet
         transcription_path = f"transcriptions/{video_id}_transcription.json"

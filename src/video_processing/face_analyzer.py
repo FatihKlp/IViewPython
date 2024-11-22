@@ -51,6 +51,9 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
         }
 
         for frame in frames:
+            if not os.path.exists(frame) or os.path.getsize(frame) == 0:
+                print(f"Skipping invalid frame: {frame}")
+                continue
             try:
                 # DeepFace analiz
                 analysis = DeepFace.analyze(img_path=frame, actions=['age', 'gender', 'race', 'emotion'])

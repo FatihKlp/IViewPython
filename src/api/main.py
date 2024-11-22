@@ -105,15 +105,6 @@ def process_video():
         if os.path.exists(video_path):
             os.remove(video_path)
             print(f"Temporary video file deleted: {video_path}")
-        
-        # Remove transcription and face analysis files if they exist
-        if transcription_path and os.path.exists(transcription_path):
-            os.remove(transcription_path)
-            print(f"Temporary transcription file deleted: {transcription_path}")
-        
-        if face_analysis_path and os.path.exists(face_analysis_path):
-            os.remove(face_analysis_path)
-            print(f"Temporary face analysis file deleted: {face_analysis_path}")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=PORT, debug=True)
