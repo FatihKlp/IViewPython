@@ -28,7 +28,7 @@ initialize_folder_structure()
 
 @app.route('/process_video', methods=['POST'])
 def process_video():
-    signed_url = request.json.get('signed_url')  # Frontend'den Signed URL bekliyoruz
+    signed_url = request.json.get('signed_url')
     candidate_id = request.json.get('candidate_id')
 
     if not signed_url or not candidate_id:
@@ -38,9 +38,12 @@ def process_video():
     print(f"Received signed_url: {signed_url}")
     print(f"Received candidate_id: {candidate_id}")
 
+    transcription_path = None
+    face_analysis_result = None
+
     try:
         # Video indirme
-        video_id = signed_url.split('/')[-1].split('?')[0]  # Dosya adını URL'den çıkar
+        video_id = signed_url.split('/')[-1].split('?')[0]
         video_path = download_video_by_signed_url(signed_url, video_id)
         if not video_path:
             print(f"Failed to download video from Signed URL: {signed_url}")
@@ -62,32 +65,28 @@ def process_video():
         full_transcription = transcription_data.get("full_transcription", "")
 
         # 2. Face Analysis İşlemi
-        face_analysis_path = analyze_faces(video_path, video_id)
-        if not face_analysis_path:
-            print("Failed to analyze faces")
-            return jsonify({"error": "Failed to analyze faces"}), 500
-
-        print(f"Face analysis saved at: {face_analysis_path}")
-
-        with open(face_analysis_path, "r", encoding="utf-8") as file:
-            face_analysis_data = json.load(file)
+        face_analysis_result = analyze_faces(video_path, video_id)
+        print(f"Face analysis result: {face_analysis_result}")
 
         # 3. Backend’e Gönderim
         payload = {
             "transcription": full_transcription,
-            "face_analysis": {
-                "age": face_analysis_data.get("average_age"),
-                "gender": face_analysis_data.get("dominant_gender"),
-                "emotion": face_analysis_data.get("dominant_emotion")
+            "face_analysis": face_analysis_result if face_analysis_result else {
+                "average_age": None,
+                "dominant_gender": None,
+                "dominant_emotion": None
             }
         }
+
+        print(f"Payload being sent to backend: {json.dumps(payload, indent=4)}")
 
         response = requests.put(
             f"{BACKEND_URL}/api/candidates/{candidate_id}/result",
             json=payload,
             headers={"Content-Type": "application/json"}
         )
-        print(f"Backend response: {response.status_code}, {response.json()}")  # Debug için eklendi
+        print(f"Backend response status code: {response.status_code}")
+        print(f"Backend response content: {response.json()}")
         response.raise_for_status()
 
         print(f"Data successfully sent to backend for candidate {candidate_id}")
@@ -100,10 +99,13 @@ def process_video():
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
-        # Clean up all temporary files
-        if os.path.exists(video_path):
+        if video_path and os.path.exists(video_path):
             os.remove(video_path)
             print(f"Temporary video file deleted: {video_path}")
+
+        if transcription_path and os.path.exists(transcription_path):
+            os.remove(transcription_path)
+            print(f"Temporary transcription file deleted: {transcription_path}")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=PORT, debug=True)

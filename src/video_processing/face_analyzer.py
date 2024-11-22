@@ -55,25 +55,38 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
                 continue
             try:
                 # DeepFace analiz
-                analysis = DeepFace.analyze(img_path=frame, actions=['age', 'gender', 'emotion'])
-                
+                analysis = DeepFace.analyze(
+                    img_path=frame, actions=['age', 'gender', 'emotion'], enforce_detection=False
+                )
+
                 # Eğer analiz bir liste dönerse sadece ilk sonucu al
                 if isinstance(analysis, list):
                     analysis = analysis[0]
 
-                # Analiz sonuçlarını toplulaştır
-                aggregated_results["age"].append(analysis["age"])
-                aggregated_results["gender"].append(analysis["dominant_gender"])
-                aggregated_results["emotion"].append(analysis["dominant_emotion"])
+                if analysis.get("age") is not None:
+                    aggregated_results["age"].append(analysis["age"])
+                if analysis.get("dominant_gender") is not None:
+                    aggregated_results["gender"].append(analysis["dominant_gender"])
+                if analysis.get("dominant_emotion") is not None:
+                    aggregated_results["emotion"].append(analysis["dominant_emotion"])
 
             except Exception as e:
                 print(f"Error analyzing frame {frame}: {e}")
 
+        # Eğer hiçbir yüz algılanmadıysa, uygun bir mesaj döndür
+        if not aggregated_results["age"]:
+            print("No faces detected in any frames.")
+            return {
+                "average_age": None,
+                "dominant_gender": None,
+                "dominant_emotion": None
+            }
+
         # Sonuçları birleştir
         final_result = {
-            "average_age": np.mean(aggregated_results["age"]) if aggregated_results["age"] else None,
-            "dominant_gender": Counter(aggregated_results["gender"]).most_common(1)[0][0] if aggregated_results["gender"] else None,
-            "dominant_emotion": Counter(aggregated_results["emotion"]).most_common(1)[0][0] if aggregated_results["emotion"] else None
+        "average_age": np.mean(aggregated_results["age"]) if aggregated_results["age"] else None,
+        "dominant_gender": Counter(aggregated_results["gender"]).most_common(1)[0][0] if aggregated_results["gender"] else None,
+        "dominant_emotion": Counter(aggregated_results["emotion"]).most_common(1)[0][0] if aggregated_results["emotion"] else None
         }
 
         # Kaydedilen dosya
@@ -82,16 +95,20 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
             json.dump(final_result, file, ensure_ascii=False, indent=4)
 
         print(f"Face analysis saved to {face_analysis_path}")
-        
+
         # Cleanup frame images
         for frame in frames:
             os.remove(frame)
 
-        return face_analysis_path
+        return final_result
 
     except Exception as e:
         print(f"Error in face analysis: {e}")
-        return None
+        return {
+            "average_age": None,
+            "dominant_gender": None,
+            "dominant_emotion": None
+        }
     finally:
         import gc
         gc.collect()  # Gereksiz belleği temizler
