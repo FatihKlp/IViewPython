@@ -24,4 +24,4 @@ COPY . .
 EXPOSE 10000
 
 # Çalıştırma komutu (Flask uygulaması için)
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:${PORT}", "--timeout", "30", "src.api.main:app"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:${PORT}", "--timeout", "120", "src.api.main:app"]
