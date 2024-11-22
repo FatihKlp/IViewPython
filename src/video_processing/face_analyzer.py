@@ -5,7 +5,7 @@ import json
 from deepface import DeepFace
 from collections import Counter
 
-def extract_frames(video_path, output_folder="frames", interval_seconds=10):
+def extract_frames(video_path, output_folder="frames", interval_seconds=20):
     """
     Video'dan frame çıkartır.
     """
