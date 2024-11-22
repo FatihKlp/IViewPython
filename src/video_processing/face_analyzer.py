@@ -46,7 +46,6 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
         aggregated_results = {
             "age": [],
             "gender": [],
-            "race": [],
             "emotion": []
         }
 
@@ -56,7 +55,7 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
                 continue
             try:
                 # DeepFace analiz
-                analysis = DeepFace.analyze(img_path=frame, actions=['age', 'gender', 'race', 'emotion'])
+                analysis = DeepFace.analyze(img_path=frame, actions=['age', 'gender', 'emotion'])
                 
                 # Eğer analiz bir liste dönerse sadece ilk sonucu al
                 if isinstance(analysis, list):
@@ -64,11 +63,7 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
 
                 # Analiz sonuçlarını toplulaştır
                 aggregated_results["age"].append(analysis["age"])
-                if not aggregated_results["age"]:
-                    print("No faces detected in the video.")
-                    return None
                 aggregated_results["gender"].append(analysis["dominant_gender"])
-                aggregated_results["race"].append(analysis["dominant_race"])
                 aggregated_results["emotion"].append(analysis["dominant_emotion"])
 
             except Exception as e:
@@ -78,7 +73,6 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
         final_result = {
             "average_age": np.mean(aggregated_results["age"]) if aggregated_results["age"] else None,
             "dominant_gender": Counter(aggregated_results["gender"]).most_common(1)[0][0] if aggregated_results["gender"] else None,
-            "dominant_race": Counter(aggregated_results["race"]).most_common(1)[0][0] if aggregated_results["race"] else None,
             "dominant_emotion": Counter(aggregated_results["emotion"]).most_common(1)[0][0] if aggregated_results["emotion"] else None
         }
 

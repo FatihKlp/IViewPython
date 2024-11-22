@@ -78,7 +78,6 @@ def process_video():
             "face_analysis": {
                 "age": face_analysis_data.get("average_age"),
                 "gender": face_analysis_data.get("dominant_gender"),
-                "race": face_analysis_data.get("dominant_race"),
                 "emotion": face_analysis_data.get("dominant_emotion")
             }
         }
