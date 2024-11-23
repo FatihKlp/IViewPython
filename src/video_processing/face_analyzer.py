@@ -44,8 +44,7 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
 
         # Frame analiz sonuçları
         aggregated_results = {
-            "age": [],
-            "gender": []
+            "age": []
         }
 
         for frame in frames:
@@ -64,8 +63,6 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
 
                 if analysis.get("age") is not None:
                     aggregated_results["age"].append(analysis["age"])
-                if analysis.get("dominant_gender") is not None:
-                    aggregated_results["gender"].append(analysis["dominant_gender"])
 
             except Exception as e:
                 print(f"Error analyzing frame {frame}: {e}")
@@ -74,14 +71,12 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
         if not aggregated_results["age"]:
             print("No faces detected in any frames.")
             return {
-                "average_age": None,
-                "dominant_gender": None
+                "average_age": None
             }
 
         # Sonuçları birleştir
         final_result = {
-        "average_age": np.mean(aggregated_results["age"]) if aggregated_results["age"] else None,
-        "dominant_gender": Counter(aggregated_results["gender"]).most_common(1)[0][0] if aggregated_results["gender"] else None
+        "average_age": np.mean(aggregated_results["age"]) if aggregated_results["age"] else None
         }
 
         # Kaydedilen dosya
@@ -100,8 +95,7 @@ def analyze_faces(video_path, video_id, interval_seconds=10):
     except Exception as e:
         print(f"Error in face analysis: {e}")
         return {
-            "average_age": None,
-            "dominant_gender": None
+            "average_age": None
         }
     finally:
         import gc

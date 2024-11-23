@@ -72,8 +72,7 @@ def process_video():
         payload = {
             "transcription": full_transcription,
             "face_analysis": face_analysis_result if face_analysis_result else {
-                "average_age": None,
-                "dominant_gender": None
+                "average_age": None
             }
         }
 
