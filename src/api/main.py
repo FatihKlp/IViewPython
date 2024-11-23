@@ -9,22 +9,10 @@ from flask_cors import CORS
 import requests
 from utils.s3_handler import download_video_by_signed_url
 from video_processing.transcriber import transcribe_video
-from video_processing.face_analyzer import analyze_faces
 from config import BACKEND_URL, FRONTEND_URL, PORT
-
-# CPU modunda çalıştır
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": [FRONTEND_URL]}}, supports_credentials=True)
-
-def initialize_folder_structure(base_path="/tmp/.deepface"):
-    required_dirs = ["weights"]
-    for folder in required_dirs:
-        full_path = os.path.join(base_path, folder)
-        os.makedirs(full_path, exist_ok=True)
-
-initialize_folder_structure()
 
 @app.route('/process_video', methods=['POST'])
 def process_video():
@@ -39,7 +27,6 @@ def process_video():
     print(f"Received candidate_id: {candidate_id}")
 
     transcription_path = None
-    face_analysis_result = None
 
     try:
         # Video indirme
@@ -51,7 +38,7 @@ def process_video():
 
         print(f"Video downloaded successfully: {video_path}")
 
-        # 1. Transcription İşlemi
+        # Transcription İşlemi
         transcription_path = transcribe_video(video_path, video_id)
         if not transcription_path:
             print("Failed to transcribe video")
@@ -64,16 +51,9 @@ def process_video():
 
         full_transcription = transcription_data.get("full_transcription", "")
 
-        # 2. Face Analysis İşlemi
-        face_analysis_result = analyze_faces(video_path, video_id)
-        print(f"Face analysis result: {face_analysis_result}")
-
-        # 3. Backend’e Gönderim
+        # Backend’e Gönderim
         payload = {
-            "transcription": full_transcription,
-            "face_analysis": face_analysis_result if face_analysis_result else {
-                "average_age": None
-            }
+            "transcription": full_transcription
         }
 
         print(f"Payload being sent to backend: {json.dumps(payload, indent=4)}")
@@ -97,6 +77,7 @@ def process_video():
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
+        # Geçici dosyaları temizle
         if video_path and os.path.exists(video_path):
             os.remove(video_path)
             print(f"Temporary video file deleted: {video_path}")
