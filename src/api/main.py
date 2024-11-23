@@ -73,8 +73,7 @@ def process_video():
             "transcription": full_transcription,
             "face_analysis": face_analysis_result if face_analysis_result else {
                 "average_age": None,
-                "dominant_gender": None,
-                "dominant_emotion": None
+                "dominant_gender": None
             }
         }
 
