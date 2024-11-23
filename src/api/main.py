@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import tensorflow as tf
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -12,8 +13,8 @@ from video_processing.transcriber import transcribe_video
 from video_processing.face_analyzer import analyze_faces
 from config import BACKEND_URL, FRONTEND_URL, PORT
 
-# CPU modunda çalıştır
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+# GPU kullanılabilirliğini kontrol et
+print("Available GPUs:", tf.config.list_physical_devices('GPU'))
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": [FRONTEND_URL]}}, supports_credentials=True)
