@@ -1,21 +1,27 @@
-FROM nvidia/cuda:11.8.0-base-ubuntu22.04
+# Base image olarak Python 3.9 kullan
+FROM python:3.9-slim
 
+# Çalışma dizinini oluştur
+WORKDIR /app
+
+# OS bağımlılıklarını yükle
 RUN apt-get update && apt-get install -y \
-    python3.9 \
-    python3-pip \
     ffmpeg \
     libgl1-mesa-glx \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+# TensorFlow için CPU modunu zorla
+ENV CUDA_VISIBLE_DEVICES=""
 
+# Gereken Python bağımlılıklarını yükle
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Kodları container'a kopyala
 COPY . .
 
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-
+# Port tanımlaması
 EXPOSE 10000
-CMD ["gunicorn", "-w", "4", "--threads", "2", "-b", "0.0.0.0:10000", "--timeout", "240", "src.api.main:app"]
+
+# Çalıştırma komutu (Flask uygulaması için)
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:${PORT}", "--timeout", "240", "src.api.main:app"]
