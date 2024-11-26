@@ -10,9 +10,17 @@ def analyze_transcription(transcription: str, context: dict) -> dict:
         dict: Analiz sonuçları.
     """
     from collections import Counter
-    import spacy
 
-    nlp = spacy.load("en_core_web_md")
+    # Dinamik spaCy yüklemesi
+    try:
+        import spacy
+        nlp = spacy.load("en_core_web_md")  # Burada modelin yüklendiğinden emin olun
+    except ImportError:
+        return {"error": "spaCy is not installed."}
+    except OSError:
+        return {"error": "The spaCy model 'en_core_web_md' is not installed."}
+
+    # Analiz işlemleri
     doc = nlp(transcription.lower())
 
     # Kelime analizleri
@@ -43,7 +51,7 @@ def analyze_transcription(transcription: str, context: dict) -> dict:
         + len(keyword_hits["soft_skills"]) * 0.3
         + (unique_words / max(word_count, 1)) * 0.3
     )
-    
+
     from text_analyze.emotion_analyze import analyze_emotion
     # Duygu analizi ekle
     emotion_analysis = analyze_emotion(transcription)
