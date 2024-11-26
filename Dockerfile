@@ -17,6 +17,9 @@ ENV CUDA_VISIBLE_DEVICES=""
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+# spaCy modelini indir
+RUN python -m spacy download en_core_web_md
+
 # Kodları container'a kopyala
 COPY . .
 
