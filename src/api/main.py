@@ -9,6 +9,7 @@ from flask_cors import CORS
 import requests
 from utils.s3_handler import download_video_by_signed_url
 from video_processing.transcriber import transcribe_video
+from text_analyze.text_analyze import analyze_transcription
 from config import BACKEND_URL, FRONTEND_URL, PORT
 
 app = Flask(__name__)
@@ -18,15 +19,19 @@ CORS(app, resources={r"/*": {"origins": [FRONTEND_URL]}}, supports_credentials=T
 def process_video():
     signed_url = request.json.get('signed_url')
     candidate_id = request.json.get('candidate_id')
+    requirements = request.json.get('requirements')  # İş gereksinimleri
+    questions = request.json.get('questions')  # Sorular
 
-    if not signed_url or not candidate_id:
-        print("Error: Missing signed_url or candidate_id")
-        return jsonify({"error": "signed_url and candidate_id are required"}), 400
+    if not signed_url or not candidate_id or not requirements or not questions:
+        return jsonify({"error": "Missing required fields"}), 400
 
     print(f"Received signed_url: {signed_url}")
     print(f"Received candidate_id: {candidate_id}")
+    print(f"Received requirements: {requirements}")
+    print(f"Received questions: {questions}")
 
     transcription_path = None
+    video_path = None
 
     try:
         # Video indirme
@@ -34,7 +39,7 @@ def process_video():
         video_path = download_video_by_signed_url(signed_url, video_id)
         if not video_path:
             print(f"Failed to download video from Signed URL: {signed_url}")
-            return jsonify({"error": "Video not found"}), 404
+            return jsonify({"error": "Video download failed"}), 404
 
         print(f"Video downloaded successfully: {video_path}")
 
@@ -42,7 +47,7 @@ def process_video():
         transcription_path = transcribe_video(video_path, video_id)
         if not transcription_path:
             print("Failed to transcribe video")
-            return jsonify({"error": "Failed to transcribe video"}), 500
+            return jsonify({"error": "Video transcription failed"}), 500
 
         print(f"Transcription saved at: {transcription_path}")
 
@@ -51,9 +56,17 @@ def process_video():
 
         full_transcription = transcription_data.get("full_transcription", "")
 
+        # Analiz İşlemi
+        analysis_results = analyze_transcription(full_transcription, {
+            "requirements": requirements,
+            "questions": questions,
+        })
+
         # Backend’e Gönderim
         payload = {
-            "transcription": full_transcription
+            "transcription": full_transcription,
+            "analysis": analysis_results,
+            "emotion_analysis": analysis_results.get("emotion_analysis"),
         }
 
         print(f"Payload being sent to backend: {json.dumps(payload, indent=4)}")
@@ -75,7 +88,7 @@ def process_video():
         return jsonify({"error": "Failed to send data to backend", "details": str(e)}), 500
     except Exception as e:
         print(f"Error: {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Unexpected error occurred", "details": str(e)}), 500
     finally:
         # Geçici dosyaları temizle
         if video_path and os.path.exists(video_path):

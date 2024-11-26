@@ -14,11 +14,12 @@ def transcribe_video(video_path, video_id):
     """
     try:
         # Kayıt dizinini oluştur
-        os.makedirs("transcriptions", exist_ok=True)
+        output_dir = os.path.join("transcriptions")
+        os.makedirs(output_dir, exist_ok=True)
 
         # Ses dosyasını çıkar
-        raw_audio_path = f"transcriptions/{video_id}_raw_audio.wav"
-        processed_audio_path = f"transcriptions/{video_id}_processed_audio.wav"
+        raw_audio_path = os.path.join(output_dir, f"{video_id}_raw_audio.wav")
+        processed_audio_path = os.path.join(output_dir, f"{video_id}_processed_audio.wav")
 
         # FFmpeg ile ses çıkarma
         command = [
@@ -63,7 +64,7 @@ def transcribe_video(video_path, video_id):
                     transcription_segments.append({"start": offset, "text": None})
 
         # Birleştirilmiş ve segmentli metni JSON olarak kaydet
-        transcription_path = f"transcriptions/{video_id}_transcription.json"
+        transcription_path = os.path.join(output_dir, f"{video_id}_transcription.json")
         with open(transcription_path, "w", encoding="utf-8") as file:
             json.dump({
                 "segments": transcription_segments,
