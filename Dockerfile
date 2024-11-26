@@ -17,14 +17,14 @@ ENV CUDA_VISIBLE_DEVICES=""
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# spaCy modelini indir ve linkle
-RUN python -m spacy download en_core_web_md && python -m spacy link en_core_web_md en_core_web_md
-
 # Kodları container'a kopyala
 COPY . .
+
+# spaCy modelini indir
+RUN python -m spacy validate || python -m spacy download en_core_web_md
 
 # Port tanımlaması
 EXPOSE 10000
 
 # Çalıştırma komutu (Flask uygulaması için)
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:${PORT}", "--timeout", "180", "src.api.main:app"]
+CMD python -m spacy download en_core_web_md && gunicorn -w 4 -b 0.0.0.0:${PORT} --timeout 180 src.api.main:app

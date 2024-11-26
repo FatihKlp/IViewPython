@@ -15,5 +15,5 @@ pydub>=0.25.1
 SpeechRecognition>=3.8.1
 python-dotenv>=1.0.0
 tf-keras>=2.6
-spacy>=3.5
+spacy
 textblob>=0.18.0
