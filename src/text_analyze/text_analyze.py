@@ -14,11 +14,16 @@ def analyze_transcription(transcription: str, context: dict) -> dict:
     # Dinamik spaCy yüklemesi
     try:
         import spacy
-        nlp = spacy.load("en_core_web_md")  # Burada modelin yüklendiğinden emin olun
+        nlp = spacy.load("en_core_web_sm")  # Burada modelin yüklendiğinden emin olun
     except ImportError:
         return {"error": "spaCy is not installed."}
     except OSError:
         return {"error": "The spaCy model 'en_core_web_md' is not installed."}
+    except SystemExit as e:
+        return {"error": f"Unexpected SystemExit error: {str(e)}"}
+    except Exception as e:
+        print(f"Error occurred during analysis: {e}")
+        return {"error": "Unexpected error occurred during analysis."}
 
     # Analiz işlemleri
     doc = nlp(transcription.lower())

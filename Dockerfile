@@ -18,7 +18,7 @@ COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # spaCy ve modelini yükle
-RUN python -m spacy download en_core_web_md
+RUN python -m spacy download en_core_web_sm
 
 # Kodları container'a kopyala
 COPY . .
@@ -27,4 +27,4 @@ COPY . .
 EXPOSE 10000
 
 # Çalıştırma komutu (Flask uygulaması için)
-CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:10000", "--timeout", "180", "src.api.main:app"]
+CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:10000", "--timeout", "300", "src.api.main:app"]
