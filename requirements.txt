@@ -15,5 +15,6 @@ pydub>=0.25.1
 SpeechRecognition>=3.8.1
 python-dotenv>=1.0.0
 tf-keras>=2.6
-spacy
 textblob>=0.18.0
+spacy>=3.0
+en-core-web-md @ https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.5.0/en_core_web_md-3.5.0.tar.gz

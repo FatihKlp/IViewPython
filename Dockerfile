@@ -1,5 +1,5 @@
-# Base image olarak Python 3.9 kullan
-FROM python:3.9-slim
+# Base image olarak Python 3.10 kullan (3.12 veya 3.11 isterseniz güncelleyebilirsiniz)
+FROM python:3.10-slim
 
 # Çalışma dizinini oluştur
 WORKDIR /app
@@ -17,8 +17,8 @@ ENV CUDA_VISIBLE_DEVICES=""
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# spaCy modelini yükleyin
-RUN pip install spacy && python -m spacy download en_core_web_md
+# spaCy ve modelini yükle
+RUN python -m spacy download en_core_web_md
 
 # Kodları container'a kopyala
 COPY . .
@@ -27,4 +27,4 @@ COPY . .
 EXPOSE 10000
 
 # Çalıştırma komutu (Flask uygulaması için)
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:${PORT}", "--timeout", "180", "src.api.main:app"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:10000", "--timeout", "180", "src.api.main:app"]

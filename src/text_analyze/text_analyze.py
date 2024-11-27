@@ -14,11 +14,15 @@ def analyze_transcription(transcription: str, context: dict) -> dict:
     # Dinamik spaCy yüklemesi
     try:
         import spacy
-        nlp = spacy.load("en_core_web_md")  # Burada modelin yüklendiğinden emin olun
+        try:
+            nlp = spacy.load("en_core_web_md")
+        except OSError:
+            # Model eksikse indir
+            import subprocess
+            subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"], check=True)
+            nlp = spacy.load("en_core_web_md")
     except ImportError:
         return {"error": "spaCy is not installed."}
-    except OSError:
-        return {"error": "The spaCy model 'en_core_web_md' is not installed."}
 
     # Analiz işlemleri
     doc = nlp(transcription.lower())
